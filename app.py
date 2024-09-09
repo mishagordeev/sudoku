@@ -7,11 +7,9 @@ def is_safe(board, row, col, num):
     for x in range(9):
         if board[row][x] == num:
             return False
-
     for x in range(9):
         if board[x][col] == num:
             return False
-
     start_row, start_col = 3 * (row // 3), 3 * (col // 3)
     for i in range(3):
         for j in range(3):
@@ -67,20 +65,19 @@ def remove_numbers(board, num_holes):
             board[row][col] = 0
             count -= 1
 
-def generate_sudoku(num_holes=40):
-    board = generate_full_sudoku()
+def generate_sudoku(board, num_holes=2):
+    # board = generate_full_sudoku()
     remove_numbers(board, num_holes)
     return board
 
 @app.route('/')
 def index():
-    sudoku_board = generate_sudoku(40)
-    return render_template('index.html', sudoku_board=sudoku_board)
-
-@app.route('/api/generate_sudoku')
-def api_generate_sudoku():
-    sudoku_board = generate_sudoku(40)
-    return jsonify(sudoku_board)
+    
+    solved_board = generate_full_sudoku() 
+    solved_board_copy = [row[:] for row in solved_board]
+    remove_numbers(solved_board_copy,10)
+    sudoku_board = solved_board_copy
+    return render_template('index.html', sudoku_board=sudoku_board, solved_board=solved_board)
 
 if __name__ == '__main__':
     app.run(debug=True)
