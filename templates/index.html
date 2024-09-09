@@ -26,6 +26,15 @@
         .readonly {
             background-color: lightgray;
         }
+        #numberSelection {
+            margin-top: 20px;
+        }
+        #numberSelection button {
+            font-size: 20px;
+            width: 40px;
+            height: 40px;
+            margin: 2px;
+        }
     </style>
 </head>
 <body>
@@ -33,9 +42,15 @@
 <h1>Sudoku</h1>
 <table id="sudokuBoard"></table>
 
+<div id="numberSelection" style="display:none;">
+    <h2>Выберите число:</h2>
+    <div id="numberButtons"></div>
+</div>
+
 <script>
     const sudokuBoard = {{ sudoku_board | safe }};
-    
+    let activeCell = null;
+
     function createSudokuBoard(board) {
         const table = document.getElementById("sudokuBoard");
 
@@ -54,6 +69,10 @@
                     input.setAttribute("type", "number");
                     input.setAttribute("min", "1");
                     input.setAttribute("max", "9");
+                    input.addEventListener("click", function () {
+                        activeCell = input;
+                        showNumberSelection();
+                    });
                 }
 
                 td.appendChild(input);
@@ -64,6 +83,28 @@
         }
     }
 
+    function showNumberSelection() {
+        const numberSelection = document.getElementById("numberSelection");
+        numberSelection.style.display = "block";
+
+        const numberButtons = document.getElementById("numberButtons");
+        numberButtons.innerHTML = ''; // Очищаем кнопки перед новым выбором
+
+        for (let num = 1; num <= 9; num++) {
+            const button = document.createElement("button");
+            button.textContent = num;
+            button.addEventListener("click", function () {
+                if (activeCell) {
+                    activeCell.value = num; // Устанавливаем выбранное число в активную ячейку
+                    activeCell = null; // Сбрасываем активную ячейку
+                    numberSelection.style.display = "none"; // Скрываем панель выбора чисел
+                }
+            });
+            numberButtons.appendChild(button);
+        }
+    }
+
+    // Создаем таблицу судоку
     createSudokuBoard(sudokuBoard);
 </script>
 
