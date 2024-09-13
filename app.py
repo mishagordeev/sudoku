@@ -72,12 +72,12 @@ def generate_sudoku(board, num_holes=2):
 
 @app.route('/')
 def index():
-    
+    num_holes = 10
     solved_board = generate_full_sudoku() 
     solved_board_copy = [row[:] for row in solved_board]
-    remove_numbers(solved_board_copy,10)
+    remove_numbers(solved_board_copy,num_holes)
     sudoku_board = solved_board_copy
-    return render_template('index.html', sudoku_board=sudoku_board, solved_board=solved_board)
+    return render_template('index.html', sudoku_board=sudoku_board, solved_board=solved_board, num_holes = num_holes)
 
 if __name__ == '__main__':
     app.run(debug=True)

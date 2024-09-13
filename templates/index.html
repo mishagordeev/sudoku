@@ -41,7 +41,7 @@
             height: 40px;
             margin: 2px;
         }
-        #errorModal {
+        #errorModal, #winModal {
             display: none;
             position: fixed;
             z-index: 1;
@@ -51,7 +51,7 @@
             height: 100%;
             background-color: rgba(0, 0, 0, 0.4);
         }
-        #errorModalContent {
+        #errorModalContent, #winModalContent {
             background-color: white;
             margin: 15% auto;
             padding: 20px;
@@ -83,9 +83,19 @@
     </div>
 </div>
 
+<div id="winModal">
+    <div id="winModalContent">
+        <h2>Победа!</h2>
+        <p>Начать новую игру?</p>
+        <button id="newGameButton1">ОК</button>
+    </div>
+</div>
+
 <script>
     const sudokuBoard = {{ sudoku_board | safe }};
     const solvedBoard = {{ solved_board | safe }};
+    const numHoles = {{ num_holes | safe }};
+    let _numHoles = numHoles;
     let activeCell = null;
 
     function createSudokuBoard(board) {
@@ -153,6 +163,13 @@
             
             activeCell = null; // Сбрасываем активную ячейку
             document.getElementById("numberSelection").style.display = "none"; // Скрываем панель выбора чисел
+            
+            _numHoles--;
+            console.log(_numHoles);
+            
+            if (_numHoles === 0) {
+                showWinModal();
+            }
         } else {
             showErrorModal(); // Показать ошибку, если число неправильное
         }
@@ -169,7 +186,19 @@
         location.reload(); // Перезагрузка страницы для новой игры
     }
 
+    function showWinModal() {
+        const winModal = document.getElementById("winModal");
+        winModal.style.display = "block";
+    }
+
+    function closeWinModal() {
+        const winModal = document.getElementById("winModal");
+        winModal.style.display = "none";
+        location.reload(); // Перезагрузка страницы для новой игры
+    }
+
     document.getElementById("newGameButton").addEventListener("click", closeErrorModal);
+    document.getElementById("newGameButton1").addEventListener("click", closeWinModal);
 
     // Создаем таблицу судоку
     createSudokuBoard(sudokuBoard);
